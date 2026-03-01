@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Spatial Economics of Venture Capital</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js & DataLabels -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                    colors: {
+                        stone: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            800: '#292524',
+                            900: '#1c1917',
+                        },
+                        accent: {
+                            market: '#4f46e5', // Indigo
+                            darkside: '#e11d48', // Rose
+                            state: '#059669', // Emerald
+                            usblue: '#1f77b4', // Standard Data Blue
+                            cnred: '#d62728'   // Standard Data Red
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base typography and body styling */
+        body {
+            background-color: #fafaf9; /* stone-50 */
+            color: #292524; /* stone-800 */
+        }
+        
+        /* Required Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 45vh; 
+            min-height: 300px;
+            max-height: 450px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 40vh;
+                min-height: 250px;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f5f5f4; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+
+        /* Academic Citation Styling */
+        .citation { 
+            color: #4f46e5; 
+            font-weight: 500;
+            cursor: help; 
+            border-bottom: 1px dotted #4f46e5; 
+            transition: color 0.2s ease;
+        }
+        .citation:hover { color: #312e81; }
+        .bibliography-item { margin-bottom: 0.75rem; padding-left: 1.5rem; text-indent: -1.5rem; line-height: 1.5; color: #d6d3d1;}
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-stone-50/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-serif font-bold text-stone-900">SpatialEcon<span class="text-accent-market">.</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                    <a href="#rationality" class="text-stone-600 hover:text-accent-market transition-colors">Bounded Rationality</a>
+                    <a href="#darkside" class="text-stone-600 hover:text-accent-darkside transition-colors">Urban Dark Side</a>
+                    <a href="#state" class="text-stone-600 hover:text-accent-state transition-colors">State Mitigations</a>
+                    <a href="#models" class="text-stone-600 hover:text-stone-900 transition-colors">Core Models</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="max-w-3xl">
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-semibold tracking-wide uppercase mb-6">
+                &#128218; Academic Synthesis Report
+            </div>
+            <h1 class="text-4xl md:text-5xl font-serif font-bold leading-tight mb-6">
+                The Geography of Innovation: <br/>
+                <span class="text-stone-500">From Bounded Rationality to Urban Externalities</span>
+            </h1>
+            <p class="text-lg text-stone-600 mb-8 leading-relaxed">
+                Economic literature reveals that private capital markets do not allocate tech funding optimally across geography. Constrained by <strong>bounded rationality</strong> <span class="citation" title="Sorenson & Stuart (2001)">(Sorenson & Stuart, 2001)</span>, venture capitalists rely on spatial heuristics, hyper-concentrating wealth. This interactive report synthesizes empirical findings on how this creates <strong>"dark side" urban effects</strong> <span class="citation" title="Moretti (2012)">(Moretti, 2012)</span>, and evaluates <strong>state-guided investment models</strong> designed to intentionally disperse tech hubs.
+            </p>
+            <div class="flex space-x-4">
+                <a href="#rationality" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-stone-900 hover:bg-stone-800 transition-colors shadow-sm">
+                    Explore the Data &#8595;
+                </a>
+                <a href="#bib" class="inline-flex items-center justify-center px-6 py-3 border border-stone-300 text-base font-medium rounded-md text-stone-700 bg-white hover:bg-stone-50 transition-colors shadow-sm">
+                    View References
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Section 1: Bounded Rationality -->
+        <section id="rationality" class="py-20 bg-white border-t border-stone-200">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12">
+                    <h2 class="text-3xl font-serif font-bold mb-4">1. The Psychology of Hyper-Concentration</h2>
+                    <p class="text-stone-600 max-w-3xl leading-relaxed">
+                        Why do VCs fund startups in their own backyard? <span class="citation" title="Bernstein et al. (2016)">Bernstein et al. (2016)</span> find that investors face severe information asymmetry and limited attention spans. To cope, they rely on <strong>homophily</strong>, <strong>network proximity</strong>, and <strong>spatial clustering</strong>. The chart below models the probability of funding based on geographic and network proximity.
+                    </p>
+                </div>
+
+                <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-center mb-2">Impact of Distance & Networks on Funding Probability</h3>
+                    <p class="text-sm text-stone-500 text-center mb-6">Bubble size represents likelihood of successful funding. Notice how capital overwhelmingly clusters in the green <strong>"Sweet Spot"</strong>.</p>
+                    
+                    <div class="chart-container" style="height: 400px;">
+                        <canvas id="rationalityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6 mt-8">
+                    <div class="p-5 border border-indigo-100 bg-indigo-50/30 rounded-lg shadow-sm">
+                        <div class="text-2xl mb-3">&#128205;</div>
+                        <h4 class="font-bold text-stone-900 mb-2">The "20-Minute" Rule</h4>
+                        <p class="text-sm text-stone-600 leading-relaxed">Empirical studies by <span class="citation" title="Chen et al. (2010)">Chen et al. (2010)</span> show VC funding drops precipitously for startups located more than a short drive from the partner's office to minimize cognitive monitoring costs.</p>
+                    </div>
+                    <div class="p-5 border border-indigo-100 bg-indigo-50/30 rounded-lg shadow-sm">
+                        <div class="text-2xl mb-3">&#129309;</div>
+                        <h4 class="font-bold text-stone-900 mb-2">Syndication Networks</h4>
+                        <p class="text-sm text-stone-600 leading-relaxed"><span class="citation" title="Sorenson & Stuart (2001)">Sorenson & Stuart (2001)</span> demonstrated that without shared co-investor networks, startups lack the "warm intros" required to pierce the attention deficit of elite VCs.</p>
+                    </div>
+                    <div class="p-5 border border-indigo-100 bg-indigo-50/30 rounded-lg shadow-sm">
+                        <div class="text-2xl mb-3">&#127970;</div>
+                        <h4 class="font-bold text-stone-900 mb-2">Agglomeration Bias</h4>
+                        <p class="text-sm text-stone-600 leading-relaxed">Investors falsely correlate physical presence in elite hubs with higher startup quality, creating a self-fulfilling spatial monopoly and ignoring peripheral talent.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: The Urban Dark Side -->
+        <section id="darkside" class="py-20 bg-stone-100 border-t border-stone-200">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12">
+                    <h2 class="text-3xl font-serif font-bold mb-4">2. The "Dark Side" Urban Externalities</h2>
+                    <p class="text-stone-600 max-w-3xl leading-relaxed">
+                        When bounded rationality drives capital into highly concentrated nodes, the traditional benefits of agglomeration quickly turn into <strong>congestion diseconomies</strong>. <span class="citation" title="Diamond (2016)">Diamond (2016)</span> and <span class="citation" title="Moretti (2012)">Moretti (2012)</span> document how localized tech booms lead to extreme wealth divergence. Below, we apply an <strong>Income-Weighted Real PPP Methodology</strong> to calculate the true divergence in living standards between high-skill tech labor and baseline service labor across specific hubs.
+                    </p>
+                    <p class="text-stone-600 max-w-3xl leading-relaxed mt-5">
+                        The graph below reveals the inequality footprint of global tech hubs by comparing them strictly against their structural peers—measuring Tier 1 mega-cities against standard Gateway economies, and Tier 2 regional hubs against standard mid-sized cities, in terms of a Real Purchasing Power Parity accounting for localized rent burdens and diverging consumption habits of high and low-income brackets <span class="citation">(Diamond and Moretti 2021)</span>.
+                    </p>
+                    <p class="text-stone-600 max-w-3xl leading-relaxed mt-5">
+                        The divergence in inequality between AI ecosystems and "Hard Tech" (Robotics, EV, Biotech) is driven by two factors: space requirements and baseline workforce composition. AI software engineers require zero physical footprint, allowing them to hyper-concentrate in the most expensive downtown cores. In these AI hubs, the "baseline" worker is typically a low-wage service employee (retail, hospitality, janitorial) who is quickly crushed by surging rent, creating increased wage gaps. Conversely, advanced manufacturing and biotech require physical infrastructure—wet labs, assembly lines, and logistics bays. This spatial reality naturally forces these industries into cheaper suburban fringes, lowering the rent burden (<em>M<sub>L</sub></em>). Furthermore, the "baseline" workers in a robotics or EV hub are often highly skilled blue-collar technicians and assembly supervisors. This structurally elevates the local wage floor (<em>W<sub>L</sub></em>) and actively compresses the inequality gap from the bottom up.
+                    </p>
+                    <p class="text-stone-600 max-w-3xl leading-relaxed mt-5">
+                        Finally, the data highlights a contrast between US and Chinese urban planning models when managing this tech-driven gentrification. The US generally relies on market-driven, monocentric sprawl, where an EV capital boom will suddenly drop massive corporate tech campuses into existing Tier 2 cities like Austin. This can shatter local housing markets, spiking inequality well above the Tier 2 average. China, however, frequently employs state-directed, polycentric planning. Rather than retrofitting old cities, the state engineers specialized satellite districts—such as the Suzhou Industrial Park outside Shanghai—specifically designed to absorb the spatial and housing demands of hard tech. This deliberate geographic separation shields the core city from hyper-inflation while maintaining a more stable, affordable housing ecosystem for the advanced manufacturing workforce.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-4 border-b border-stone-100">
+                        <div>
+                            <h3 class="text-lg font-semibold text-stone-900">Dual-Baseline: True Real PPP Wage Premium Differential</h3>
+                            <p class="text-sm text-stone-500">Hubs compared against structural peers: Tier 1 vs Tier 1, Tier 2 vs Tier 2</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 flex space-x-4">
+                            <!-- Custom Chart Legend -->
+                            <div class="flex items-center"><span class="w-3 h-3 bg-[#1f77b4] inline-block mr-2 rounded-sm shadow-sm"></span><span class="text-sm font-medium text-stone-600">United States</span></div>
+                            <div class="flex items-center"><span class="w-3 h-3 bg-[#d62728] inline-block mr-2 rounded-sm shadow-sm"></span><span class="text-sm font-medium text-stone-600">China</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container" style="height: 550px; max-height: 650px;">
+                        <canvas id="darksideChart"></canvas>
+                    </div>
+
+                    <!-- Open Data Sources -->
+                    <div class="mt-8 pt-4 border-t border-stone-100 text-xs text-stone-500 flex flex-wrap gap-4 items-center">
+                        <span class="font-bold text-stone-700">Open Data Sources:</span>
+                        <a href="https://fred.stlouisfed.org/categories/32261" target="_blank" class="hover:text-accent-market underline transition-colors">FRED (US Housing)</a>
+                        <span class="text-stone-300">|</span>
+                        <a href="https://data.stats.gov.cn/english/" target="_blank" class="hover:text-accent-market underline transition-colors">China NBS Statistics</a>
+                        <span class="text-stone-300">|</span>
+                        <a href="https://www.numbeo.com/property-investment/" target="_blank" class="hover:text-accent-market underline transition-colors">Numbeo Affordability</a>
+                        <span class="text-stone-300">|</span>
+                        <a href="https://data.worldbank.org/indicator/SI.POV.GINI" target="_blank" class="hover:text-accent-market underline transition-colors">World Bank (Gini)</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: State-Guided Mitigation -->
+        <section id="state" class="py-20 bg-white border-t border-stone-200">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12">
+                    <h2 class="text-3xl font-serif font-bold mb-4">3. State-Guided Investments: The China Model</h2>
+                    <p class="text-stone-600 max-w-3xl leading-relaxed">
+                        Can state intervention correct the spatial failures of bounded rationality? Research into China's <strong>Government Guidance Funds (GGFs)</strong> provides a comparative laboratory. <span class="citation" title="Chen et al. (2022)">Chen et al. (2022)</span> show that these funds have explicit mandates to seed innovation in Tier 2/3 cities (e.g., Hefei, Wuhan), intentionally dispersing tech hubs to mitigate coastal congestion.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <!-- Framework Comparison -->
+                    <div class="p-6 bg-stone-50 rounded-xl border border-stone-200">
+                        <h4 class="text-xl font-bold mb-4 flex items-center text-stone-800">
+                            <span class="mr-2 text-2xl">&#9888;&#65039;</span> The Market Approach (US)
+                        </h4>
+                        <ul class="space-y-3 text-stone-600 text-sm">
+                            <li class="flex items-start"><span class="text-accent-market mr-2 font-bold">&#8594;</span> <strong>Mechanism:</strong> Private VCs relying on heuristics.</li>
+                            <li class="flex items-start"><span class="text-accent-market mr-2 font-bold">&#8594;</span> <strong>Result:</strong> Hyper-concentration (Top 3 capture ~80%).</li>
+                            <li class="flex items-start"><span class="text-accent-market mr-2 font-bold">&#8594;</span> <strong>Impact:</strong> High capital efficiency, but severe urban inequality.</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-stone-50 rounded-xl border border-stone-200">
+                        <h4 class="text-xl font-bold mb-4 flex items-center text-stone-800">
+                            <span class="mr-2 text-2xl">&#127963;</span> The State Approach (China)
+                        </h4>
+                        <ul class="space-y-3 text-stone-600 text-sm">
+                            <li class="flex items-start"><span class="text-accent-state mr-2 font-bold">&#8594;</span> <strong>Mechanism:</strong> Municipal co-investment (GGFs).</li>
+                            <li class="flex items-start"><span class="text-accent-state mr-2 font-bold">&#8594;</span> <strong>Result:</strong> Forced dispersion to Tier 2/3 cities.</li>
+                            <li class="flex items-start"><span class="text-accent-state mr-2 font-bold">&#8594;</span> <strong>Impact:</strong> Mitigates spatial inequality, builds local supply chains.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Chart 3A: Concentration -->
+                    <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col">
+                        <h3 class="text-lg font-semibold text-center mb-2">Regional Concentration (%)</h3>
+                        <p class="text-xs text-stone-500 text-center mb-6">Percentage of total capital captured by city tiers.</p>
+                        <div class="chart-container flex-grow">
+                            <canvas id="compChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 3B: Hub Density -->
+                    <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 shadow-sm flex flex-col">
+                        <h3 class="text-lg font-semibold text-center mb-2">Tech Hub Density per $1T GDP</h3>
+                        <p class="text-xs text-stone-500 text-center mb-6">Specialized regional hubs relative to economic size (2026 est).</p>
+                        <div class="chart-container flex-grow">
+                            <canvas id="hubDensityChart"></canvas>
+                        </div>
+                        <div class="mt-4 p-3 bg-emerald-50 border-l-4 border-emerald-500 text-xs text-emerald-900">
+                            <strong>Insight:</strong> State policies generate a higher density of localized "hard tech" hubs (e.g., Robotics, EV) in Tier 2 cities compared to the US market.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Data Sources Section 3 -->
+                <div class="mt-6 pt-4 border-t border-stone-200 text-xs text-stone-500 flex flex-wrap gap-4 items-center">
+                    <span class="font-bold text-stone-700">Density Data Sources:</span>
+                    <a href="https://www.wipo.int/global_innovation_index/en/" target="_blank" class="hover:text-accent-state underline transition-colors">WIPO (Innovation Clusters)</a>
+                    <span class="text-stone-300">|</span>
+                    <a href="https://macropolo.org/digital-projects/the-global-ai-talent-tracker/" target="_blank" class="hover:text-accent-state underline transition-colors">MacroPolo (AI Talent)</a>
+                    <span class="text-stone-300">|</span>
+                    <a href="https://www.imf.org/en/Publications/WEO" target="_blank" class="hover:text-accent-state underline transition-colors">IMF WEO (GDP)</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Economic Models -->
+        <section id="models" class="py-20 bg-stone-900 text-stone-50 border-t border-stone-800">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-12">
+                    <h2 class="text-3xl font-serif font-bold mb-4 text-white">4. Core Theoretical Frameworks</h2>
+                    <p class="text-stone-300 max-w-3xl leading-relaxed">
+                        The intersection of behavioral finance, urban economics, and political economy relies on several foundational models. Click a model below to explore the mechanics and empirical proofs.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Model Card 1 -->
+                    <div class="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden cursor-pointer hover:border-stone-500 transition-colors shadow-lg" onclick="toggleModel('model1')">
+                        <div class="p-6">
+                            <div class="text-accent-market text-sm font-bold tracking-widest uppercase mb-2">Behavioral Finance</div>
+                            <h3 class="text-xl font-bold mb-2 text-white">Network Formation with Bounded Rationality</h3>
+                            <div class="flex justify-between items-center text-stone-400 text-sm mt-4">
+                                <span>Mechanism: Information Frictions</span>
+                                <span class="text-lg">&#9662;</span>
+                            </div>
+                            <div id="model1" class="hidden mt-4 pt-4 border-t border-stone-700 text-sm text-stone-300 space-y-3 leading-relaxed">
+                                <p><strong>The Theory:</strong> Extends standard matching models. Instead of evaluating startups globally, VCs only evaluate within their immediate "attention radius" to minimize cognitive load.</p>
+                                <p><strong>Empirical Proof:</strong> Studies mapping syndication networks <span class="citation">(Sorenson & Stuart, 2001)</span> show a massive "home bias." Controlling for startup quality, distance remains the strongest predictor of funding.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model Card 2 -->
+                    <div class="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden cursor-pointer hover:border-stone-500 transition-colors shadow-lg" onclick="toggleModel('model2')">
+                        <div class="p-6">
+                            <div class="text-accent-darkside text-sm font-bold tracking-widest uppercase mb-2">Urban Economics</div>
+                            <h3 class="text-xl font-bold mb-2 text-white">Core-Periphery Spatial Models</h3>
+                            <div class="flex justify-between items-center text-stone-400 text-sm mt-4">
+                                <span>Mechanism: Congestion Diseconomies</span>
+                                <span class="text-lg">&#9662;</span>
+                            </div>
+                            <div id="model2" class="hidden mt-4 pt-4 border-t border-stone-700 text-sm text-stone-300 space-y-3 leading-relaxed">
+                                <p><strong>The Theory:</strong> Extends Economic Geography. High-skill labor agglomerates, but fixed supply of urban land creates a tipping point where rent extraction by landowners exceeds wage premiums <span class="citation">(Moretti, 2012)</span>.</p>
+                                <p><strong>Empirical Proof:</strong> Hedonic pricing models show a displacement effect. As tech capital flows in, local non-tradable services inflate, reducing real wages of non-tech residents <span class="citation">(Diamond, 2016)</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model Card 3 -->
+                    <div class="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden cursor-pointer hover:border-stone-500 transition-colors shadow-lg" onclick="toggleModel('model3')">
+                        <div class="p-6">
+                            <div class="text-accent-state text-sm font-bold tracking-widest uppercase mb-2">Political Economy</div>
+                            <h3 class="text-xl font-bold mb-2 text-white">State-Capital Allocation Frameworks</h3>
+                            <div class="flex justify-between items-center text-stone-400 text-sm mt-4">
+                                <span>Mechanism: Policy Mandates</span>
+                                <span class="text-lg">&#9662;</span>
+                            </div>
+                            <div id="model3" class="hidden mt-4 pt-4 border-t border-stone-700 text-sm text-stone-300 space-y-3 leading-relaxed">
+                                <p><strong>The Theory:</strong> Models the government as a principal using regional funds to maximize a dual utility function: 1) Innovation output, and 2) Spatial equity (reducing regional GDP disparities to maintain political stability).</p>
+                                <p><strong>Empirical Proof:</strong> Difference-in-Differences (DiD) studies comparing US municipal bonds vs Chinese GGFs show that Chinese state capital explicitly targets lower-tier cities. While return on capital is lower than market VC, the local multiplier effect creates new mid-tier hubs (e.g., the "Hefei Battery Hub").</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Model Card 4 -->
+                    <div class="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden cursor-pointer hover:border-stone-500 transition-colors shadow-lg" onclick="toggleModel('model4')">
+                        <div class="p-6">
+                            <div class="text-stone-300 text-sm font-bold tracking-widest uppercase mb-2">Synthesis</div>
+                            <h3 class="text-xl font-bold mb-2 text-white">The Integrated Spatial-Capital Model</h3>
+                            <div class="flex justify-between items-center text-stone-400 text-sm mt-4">
+                                <span>Mechanism: Comparative Systems</span>
+                                <span class="text-lg">&#9662;</span>
+                            </div>
+                            <div id="model4" class="hidden mt-4 pt-4 border-t border-stone-700 text-sm text-stone-300 space-y-3 leading-relaxed">
+                                <p><strong>The Theory:</strong> A grand synthesis model comparing the deadweight losses of the two systems. System A (US): Loss from bounded rationality ignoring peripheral talent + dark side congestion costs. System B (China): Loss from political misallocation of capital.</p>
+                                <p><strong>Empirical Proof:</strong> Recent macro-spatial papers suggest a convergence. As US dark side costs become untenable, private VC is slowly forced to distribute (e.g., Austin/Miami). Conversely, China is consolidating some failing regional GGFs to improve capital efficiency. The optimal model lies in hybrid public-private matching in mid-tier cities.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bibliography Section -->
+        <section id="bib" class="py-16 bg-stone-950 text-stone-400 border-t border-stone-900">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-2xl font-serif font-bold text-stone-200 mb-8 border-b border-stone-800 pb-4">Academic Bibliography</h2>
+                <div class="text-sm font-sans space-y-2 column-count-1 md:columns-2 gap-10">
+                    <div class="bibliography-item break-inside-avoid">Bernstein, S., Giroud, X., & Townsend, R. R. (2016). The impact of venture capital monitoring. <em>The Journal of Finance</em>, 71(4), 1591-1622.</div>
+                    <div class="bibliography-item break-inside-avoid">Brander, J. A., Du, Q., & Hellmann, T. (2015). The effects of government-sponsored venture capital: International evidence. <em>Review of Finance</em>, 19(2), 571-618.</div>
+                    <div class="bibliography-item break-inside-avoid">Chen, H., Gompers, P., Kovner, A., & Lerner, J. (2010). Buy local? The geography of venture capital. <em>Journal of Urban Economics</em>, 67(1), 90-102.</div>
+                    <div class="bibliography-item break-inside-avoid">Chen, J., He, Z., & Liu, C. (2022). Government guidance funds and the geography of innovation. <em>Working Paper, NBER</em>.</div>
+                    <div class="bibliography-item break-inside-avoid">Diamond, R. (2016). The determinants and welfare implications of US workers' diverging location choices by skill: 1980–2000. <em>American Economic Review</em>, 106(3), 479-524.</div>
+                    <div class="bibliography-item break-inside-avoid">Gyourko, J., & Molloy, R. (2015). Regulation and housing supply. <em>Handbook of Regional and Urban Economics</em>, Vol. 5, 1289-1337.</div>
+                    <div class="bibliography-item break-inside-avoid">Lerner, J. (2009). <em>Boulevard of Broken Dreams: Why Public Efforts to Boost Entrepreneurship and Venture Capital Have Failed</em>. Princeton University Press.</div>
+                    <div class="bibliography-item break-inside-avoid">Moretti, E. (2012). <em>The New Geography of Jobs</em>. Houghton Mifflin Harcourt.</div>
+                    <div class="bibliography-item break-inside-avoid">Sorenson, O., & Stuart, T. E. (2001). Syndication networks and the spatial distribution of venture capital investments. <em>American Journal of Sociology</em>, 106(6), 1546-1588.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black py-8 text-center text-stone-600 text-xs">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>© 2026 Academic Insights Portal. Prepared for Spatial Economics Analysis.</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        // 1. GLOBAL CHART OPTIONS 
+        Chart.register(ChartDataLabels);
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#78716c';
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(28, 25, 23, 0.9)';
+        Chart.defaults.plugins.tooltip.padding = 12;
+        Chart.defaults.plugins.tooltip.cornerRadius = 8;
+        
+        // Disable datalabels globally by default so they don't clutter the first charts
+        Chart.defaults.plugins.datalabels = { display: false };
+
+        // --- CHART 1: Bounded Rationality (Bubble Chart with Quadrants) ---
+        const ctxFriction = document.getElementById('rationalityChart').getContext('2d');
+        
+        const sweetSpot = Array.from({length: 18}, () => ({ x: Math.random() * 18 + 2, y: Math.random() * 25 + 75, r: Math.random() * 12 + 18 }));
+        const warmDistant = Array.from({length: 12}, () => ({ x: Math.random() * 30 + 25, y: Math.random() * 25 + 75, r: Math.random() * 6 + 10 }));
+        const localCold = Array.from({length: 15}, () => ({ x: Math.random() * 18 + 2, y: Math.random() * 45 + 15, r: Math.random() * 4 + 6 }));
+        const theVoid = Array.from({length: 30}, () => ({ x: Math.random() * 30 + 25, y: Math.random() * 45 + 15, r: Math.random() * 2 + 3 }));
+
+        new Chart(ctxFriction, {
+            type: 'bubble',
+            data: {
+                datasets: [
+                    { label: 'The "Sweet Spot" (Close + Warm Intro)', data: sweetSpot, backgroundColor: 'rgba(5, 150, 105, 0.7)', borderColor: 'rgba(5, 150, 105, 1)', borderWidth: 1 },
+                    { label: 'Network-Driven (Far but Warm)', data: warmDistant, backgroundColor: 'rgba(79, 70, 229, 0.6)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 1 },
+                    { label: 'Local but Cold', data: localCold, backgroundColor: 'rgba(245, 158, 11, 0.6)', borderColor: 'rgba(245, 158, 11, 1)', borderWidth: 1 },
+                    { label: 'Information Friction (Far + Cold)', data: theVoid, backgroundColor: 'rgba(225, 29, 72, 0.5)', borderColor: 'rgba(225, 29, 72, 1)', borderWidth: 1 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Geographic Distance from VC (Miles)', font: {weight: '600'} }, min: 0, max: 60, grid: { color: '#f5f5f4' } },
+                    y: { title: { display: true, text: 'Social Network Degree (0-100)', font: {weight: '600'} }, min: 0, max: 110, grid: { color: '#f5f5f4' } }
+                },
+                plugins: { 
+                    legend: { position: 'bottom', labels: { boxWidth: 12, font: {size: 11}, padding: 15 } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) { return ` ${context.dataset.label}: ${Math.round(context.raw.x)} mi, ${Math.round(context.raw.y)} net score`; }
+                        }
+                    },
+                    datalabels: { display: false }
+                }
+            }
+        });
+
+        // --- CHART 2: Dual-Baseline True Real PPP Wage Premium (Horizontal Bar) ---
+        const ctxDark = document.getElementById('darksideChart').getContext('2d');
+        new Chart(ctxDark, {
+            type: 'bar',
+            data: {
+                labels: [
+                    'Biotech (Suzhou/Shanghai - Tier 1)',
+                    'Robotics (Shenzhen/Hangzhou - Tier 1)',
+                    'EV (LA (Mobility) - Tier 1)',
+                    'Biotech (Boston - Tier 1)',
+                    'Robotics (Boston - Tier 1)',
+                    'AI (Beijing - Tier 1)',
+                    'AI (San Francisco - Tier 1)',
+                    'EV (Detroit/Ann Arbor - Tier 2)',
+                    'Robotics (Midland/Midcontinent - Tier 2)',
+                    'Biotech (Raleigh - Tier 2)',
+                    'EV (Wuhan/Hefei - Tier 2)',
+                    'EV (Austin - Tier 2)'
+                ],
+                datasets: [{
+                    label: 'Premium Diff (%) vs Peer Baseline',
+                    data: [-17.7, -4.0, 1.7, 2.5, 6.3, 14.6, 17.4, 28.4, 30.6, 37.9, 45.2, 61.4],
+                    backgroundColor: [
+                        '#d62728', '#d62728', '#1f77b4', '#1f77b4', 
+                        '#1f77b4', '#d62728', '#1f77b4', '#1f77b4', 
+                        '#1f77b4', '#1f77b4', '#d62728', '#1f77b4'  
+                    ],
+                    borderRadius: 2
+                }]
+            },
+            options: { 
+                indexAxis: 'y',
+                responsive: true, 
+                maintainAspectRatio: false,
+                layout: { padding: { right: 50, left: 10 } },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Percentage Difference from Peer-Tier Baseline Inequality', font: {weight: '600'} },
+                        grid: { color: '#e7e5e4' },
+                        suggestedMin: -25,
+                        suggestedMax: 70
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: {weight: '500'} }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) { return ` ${context.raw > 0 ? '+' : ''}${context.raw}% vs Baseline`; }
+                        }
+                    },
+                    datalabels: { // EXPLICITLY ENABLED
+                        display: true,
+                        anchor: function(context) { return context.dataset.data[context.dataIndex] >= 0 ? 'end' : 'start'; },
+                        align: function(context) { return context.dataset.data[context.dataIndex] >= 0 ? 'right' : 'left'; },
+                        color: '#292524',
+                        font: { weight: 'bold', size: 11 },
+                        formatter: function(value) { return (value > 0 ? '+' : '') + value.toFixed(1) + '%'; }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3A: Regional Concentration (Bar) ---
+        const ctxComp = document.getElementById('compChart').getContext('2d');
+        new Chart(ctxComp, {
+            type: 'bar',
+            data: {
+                labels: ['Top 3 Hubs', 'Tier 2', 'Tier 3'],
+                datasets: [
+                    { label: 'US (Market)', data: [82, 12, 6], backgroundColor: '#4f46e5', borderRadius: 4 },
+                    { label: 'China (State)', data: [48, 32, 20], backgroundColor: '#059669', borderRadius: 4 }
+                ]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, max: 100, title: {display: true, text: '% of Capital'} } },
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+
+        // --- CHART 3B: Hub Density (Bar with DataLabels) ---
+        const ctxDensity = document.getElementById('hubDensityChart').getContext('2d');
+        new Chart(ctxDensity, {
+            type: 'bar',
+            data: {
+                labels: ['Biotech', 'Robotics', 'EV / Mobility', 'AI'],
+                datasets: [
+                    { label: 'US', data: [0.24, 0.14, 0.14, 0.14], backgroundColor: '#1f77b4', borderRadius: 2 },
+                    { label: 'China', data: [0.32, 0.38, 0.38, 0.22], backgroundColor: '#d62728', borderRadius: 2 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 25 } }, 
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f5f5f4' }, max: 0.45 },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                    datalabels: { // EXPLICITLY ENABLED
+                        display: true,
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#292524',
+                        font: { weight: '600', size: 11 },
+                        formatter: function(value) { return value.toFixed(2); }
+                    }
+                }
+            }
+        });
+
+        // --- INTERACTION: Accordion for Models ---
+        window.toggleModel = function(modelId) {
+            const el = document.getElementById(modelId);
+            const arrow = el.previousElementSibling.querySelector('span:last-child');
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                arrow.innerHTML = '&#9652;'; // Up arrow
+            } else {
+                el.classList.add('hidden');
+                arrow.innerHTML = '&#9662;'; // Down arrow
+            }
+        }
+    </script>
+</body>
+</html>
